@@ -1,0 +1,184 @@
+\documentclass{beamer}
+\usetheme{Madrid}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\definecolor{codegray}{rgb}{0.95,0.95,0.95}
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  frame=single,
+  showstringspaces=false,
+  language=Python,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{orange}
+}
+
+\title{Python Techniques That Will Make Your Professor\\Accuse You of Academic Dishonesty}
+\author{Ethan Clark and Joshua Ganschow}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}{Introduction}
+Together, we're going to learn some secret techniques in Python that \textit{might} get you accused of academic dishonesty. We'll start off with some tame examples of what you can do, then get further into the weeds
+\pause
+\vspace{5em}
+
+Disclaimer: We assume no responsibility if you use these and get accused.
+\end{frame}
+
+\section{Operator Overloading}
+\begin{frame}[fragile]{Reinventing the Plus Operator}
+\begin{lstlisting}
+class Strange:
+    def __init__(self, value):
+        self.value = value
+    def __add__(self, other):
+        # Instead of summing, multiply the values
+        return Strange(self.value * other.value)
+        
+a = Strange(3)
+b = Strange(4)
+print((a + b).value)  # Outputs 12 instead of 7
+\end{lstlisting}
+\end{frame}
+
+\section{One-Liners That Shouldn't Work}
+\begin{frame}[fragile]{One-Liner Examples}
+\begin{lstlisting}
+nums = [1, 2, 3, 4, 5]
+squared_evens = [x*x for x in nums if x % 2 == 0]
+\end{lstlisting}
+\vspace{1em}
+ 
+\begin{itemize}
+  \item Creates a list of numbers.
+  \item Uses a list comprehension to square each even number.
+\end{itemize}
+\vspace{1em}
+\begin{lstlisting}
+flat = [item for row in matrix for item in row]
+\end{lstlisting}
+\vspace{1em}
+ 
+\begin{itemize}
+  \item Flattens a 2D list (matrix) into a 1D list.
+\end{itemize}
+\end{frame}
+
+\section{Dynamic Code Execution}
+\begin{frame}[fragile]{Using \texttt{eval} and \texttt{exec}  }
+\begin{lstlisting}
+string_to_eval = "2*10"
+eval(string_to_eval)
+code = "print('Hello from exec')"
+exec(code)
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]{Recursive Lambda for Factorial Calculation}
+\begin{lstlisting}[breaklines=true]
+factorial = (
+    lambda f: lambda x: 1 if x == 0 else x * f(f)(x - 1))
+    (
+    lambda f: lambda x: 1 if x == 0 else x * f(f)(x - 1)
+)
+print(factorial(5))
+\end{lstlisting}
+\vspace{1em}
+\begin{itemize}
+  \item The outer lambda accepts a function, and the inner lambda performs the recursion.
+  \item The self-application trick (passing the lambda to itself) allows it to call itself recursively.
+\end{itemize}
+\end{frame}
+
+
+\section{Decorators and Metaprogramming}
+\begin{frame}[fragile]{Function Decorator}
+\begin{lstlisting}
+def evil_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Before execution")
+        result = func(*args, **kwargs)
+        print("After execution")
+        return result
+    return wrapper
+
+@evil_decorator
+def greet(name):
+    print(f"Hello, {name}!")
+    
+greet("World")
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Metaclasses for Adding Magic}
+\begin{lstlisting}
+class Meta(type):
+    def __new__(self, name, bases, dct):
+        dct['added_attribute'] = 'Mystery'
+        return super().__new__(self, name, bases, dct)
+
+class sub(metaclass=Meta):
+    pass
+
+print(sub.added_attribute)
+\end{lstlisting}
+\vspace{1em}
+\textbf{When new is called}
+\begin{itemize}
+    \item \texttt{name} is the name of the class being created
+    \item \texttt{bases} is a tuple of base classes
+    \item \texttt{dct} is a ditionary containing the class's attributes and methods
+\end{itemize}
+\end{frame}
+
+\section{Monkey Patching}
+\begin{frame}[fragile]{Changing Behavior at Runtime}
+\begin{lstlisting}
+import math
+
+original_sqrt = math.sqrt
+
+math.sqrt = lambda x: 'Cheated sqrt!'
+
+print(math.sqrt(16))
+
+math.sqrt = original_sqrt
+\end{lstlisting}
+\vspace{1em}
+ 
+\begin{itemize}
+  \item Temporarily replaces the \texttt{math.sqrt} function with a lambda that returns a fixed string.
+  \item Restores the original function afterwards.
+\end{itemize}
+\end{frame}
+
+\section{Introspection with \texttt{inspect}}
+\begin{frame}[fragile]{Inspecting Function Source Code}
+\begin{lstlisting}
+import inspect
+
+def sample_function(a, b):
+    return a + b
+
+# Print the source code of sample_function
+print(inspect.getsource(sample_function))
+\end{lstlisting}
+\vspace{1em}
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Closing Thoughts}
+\begin{itemize}
+  \item Python is powerful; apply it as such
+  \item Maybe avoid some of these tricks if you can help it
+\end{itemize}
+\end{frame}
+
+\end{document}
